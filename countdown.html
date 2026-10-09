@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090b1a">
+  <title>Countdown to 2027</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --muted: #a6abc4;
+      --text: #f7f7ff;
+      --purple: #a78bfa;
+      --cyan: #67e8f9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 50% 0%, rgb(99 70 180 / 20%), transparent 48%),
+        linear-gradient(145deg, #10132b 0%, #090b1a 52%, #10152b 100%);
+    }
+
+    body::before,
+    body::after {
+      position: fixed;
+      z-index: -1;
+      content: "";
+      pointer-events: none;
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+
+    body::before {
+      top: 12%;
+      left: 8%;
+      width: 3px;
+      height: 3px;
+      background: #fff;
+      box-shadow:
+        12vw 18vh 0 1px #b8a6ff, 25vw 4vh 0 #fff, 42vw 24vh 0 1px #fff,
+        59vw 8vh 0 #a5edff, 77vw 20vh 0 1px #fff, 91vw 6vh 0 #fff,
+        8vw 64vh 0 #a5edff, 22vw 83vh 0 1px #fff, 40vw 72vh 0 #fff,
+        66vw 88vh 0 1px #b8a6ff, 83vw 65vh 0 #fff, 95vw 82vh 0 1px #fff;
+      animation: twinkle 4s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      top: 20%;
+      right: 12%;
+      width: 240px;
+      height: 240px;
+      background: rgb(110 79 226 / 14%);
+      filter: blur(90px);
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      from { opacity: .4; }
+      to { opacity: 1; }
+    }
+
+    @keyframes drift {
+      to { transform: translate(-35px, 45px) scale(1.15); }
+    }
+
+    main {
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 48px 20px;
+    }
+
+    .countdown {
+      width: min(100%, 760px);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--cyan);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 7vw, 4.5rem);
+      font-weight: 750;
+      letter-spacing: -.055em;
+      line-height: 1.05;
+      text-shadow: 0 0 36px rgb(167 139 250 / 24%);
+    }
+
+    .timer {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(10px, 2.2vw, 18px);
+    }
+
+    .time-card {
+      display: grid;
+      min-height: clamp(112px, 19vw, 158px);
+      align-content: center;
+      gap: 9px;
+      padding: 18px 8px;
+      border: 1px solid rgb(191 176 255 / 18%);
+      border-radius: 20px;
+      background: linear-gradient(150deg, rgb(35 36 68 / 86%), rgb(19 22 43 / 88%));
+      box-shadow:
+        0 12px 38px rgb(0 0 0 / 23%),
+        inset 0 1px 0 rgb(255 255 255 / 7%),
+        0 0 24px rgb(139 112 255 / 9%);
+      backdrop-filter: blur(12px);
+    }
+
+    .value {
+      display: block;
+      color: #fff;
+      font-size: clamp(2rem, 7vw, 4rem);
+      font-variant-numeric: tabular-nums;
+      font-weight: 750;
+      letter-spacing: -.06em;
+      line-height: 1;
+      text-shadow: 0 0 22px rgb(167 139 250 / 45%);
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: clamp(.62rem, 2vw, .78rem);
+      font-weight: 650;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .seconds-pop { animation: pop .38s ease-out; }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    .celebration {
+      min-height: 1.5em;
+      margin: 26px 0 0;
+      color: #f9d77e;
+      font-size: clamp(1.25rem, 4vw, 1.8rem);
+      font-weight: 750;
+      text-shadow: 0 0 24px rgb(249 215 126 / 45%);
+    }
+
+    .input-error {
+      grid-column: 1 / -1;
+      margin: 0;
+      color: #fda4af;
+      font-size: .8rem;
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 14px;
+      margin: 46px auto 0;
+      padding: 20px;
+      border: 1px solid rgb(191 176 255 / 13%);
+      border-radius: 18px;
+      background: rgb(17 19 39 / 65%);
+      text-align: left;
+    }
+
+    .holiday-field { grid-column: 1 / -1; }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: #c4c8dc;
+      font-size: .78rem;
+      font-weight: 650;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid rgb(173 164 221 / 26%);
+      border-radius: 10px;
+      outline: none;
+      color: var(--text);
+      background: rgb(10 12 28 / 80%);
+      font: inherit;
+    }
+
+    .field input:disabled {
+      color: #c4c8dc;
+      opacity: .75;
+    }
+
+    .field input:focus-visible,
+    .field select:focus-visible {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgb(167 139 250 / 20%);
+    }
+
+    #confetti {
+      position: fixed;
+      z-index: 2;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    @media (max-width: 520px) {
+      main { padding: 34px 16px; }
+      .timer { gap: 8px; }
+      .time-card { min-height: 105px; padding: 14px 4px; border-radius: 14px; }
+      .settings { grid-template-columns: 1fr; margin-top: 32px; padding: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <main>
+    <section class="countdown" aria-labelledby="page-title">
+      <p class="eyebrow">The next chapter begins in</p>
+      <h1 id="page-title">Countdown to 2027</h1>
+
+      <div class="timer" role="timer" aria-label="Time remaining">
+        <div class="time-card"><span class="value" id="days">000</span><span class="label">Days</span></div>
+        <div class="time-card"><span class="value" id="hours">00</span><span class="label">Hours</span></div>
+        <div class="time-card"><span class="value" id="minutes">00</span><span class="label">Minutes</span></div>
+        <div class="time-card"><span class="value" id="seconds">00</span><span class="label">Seconds</span></div>
+      </div>
+      <p class="celebration" id="celebration" aria-live="polite"></p>
+
+      <form class="settings" onsubmit="return false">
+        <div class="field holiday-field">
+          <label for="holiday-select">Holiday</label>
+          <select id="holiday-select">
+          </select>
+        </div>
+        <div class="field">
+          <label for="target-date">Countdown date and time</label>
+          <input id="target-date" type="datetime-local">
+        </div>
+        <div class="field">
+          <label for="event-input">Event name</label>
+          <input id="event-input" type="text" maxlength="60" autocomplete="off">
+        </div>
+        <p class="input-error" id="date-error" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const holidays = [
+      { name: "Dussehra", date: "2026-10-20T00:00" },
+      { name: "Diwali", date: "2026-11-08T00:00" },
+      { name: "Guru Nanak Gurpurab", date: "2026-11-24T00:00" },
+      { name: "Christmas", date: "2026-12-25T00:00" },
+      { name: "New Year 2027", date: "2027-01-01T00:00" },
+      { name: "Lohri", date: "2027-01-13T00:00" },
+      { name: "Republic Day", date: "2027-01-26T00:00" }
+    ];
+    const holidaySelect = document.querySelector("#holiday-select");
+    const dateInput = document.querySelector("#target-date");
+    const eventInput = document.querySelector("#event-input");
+    const pageTitle = document.querySelector("#page-title");
+    const celebration = document.querySelector("#celebration");
+    const dateError = document.querySelector("#date-error");
+    const secondsDisplay = document.querySelector("#seconds");
+    const timeDisplays = {
+      days: document.querySelector("#days"),
+      hours: document.querySelector("#hours"),
+      minutes: document.querySelector("#minutes"),
+      seconds: secondsDisplay
+    };
+    const canvas = document.querySelector("#confetti");
+    const context = canvas.getContext("2d");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let celebrated = false;
+    let confettiPieces = [];
+    let confettiFrame = 0;
+    let previousSeconds = "";
+
+    for (const holiday of holidays) {
+      const option = document.createElement("option");
+      option.value = holiday.date;
+      option.textContent = holiday.name;
+      holidaySelect.append(option);
+    }
+    const customOption = document.createElement("option");
+    customOption.value = "custom";
+    customOption.textContent = "Custom date";
+    holidaySelect.append(customOption);
+
+    function updateHeading() {
+      const eventName = eventInput.value.trim() || "your event";
+      pageTitle.textContent = `Countdown to ${eventName}`;
+      document.title = pageTitle.textContent;
+    }
+
+    function selectHoliday(holiday) {
+      holidaySelect.value = holiday.date;
+      dateInput.value = holiday.date;
+      eventInput.value = holiday.name;
+      dateInput.disabled = true;
+      eventInput.disabled = true;
+      updateHeading();
+      celebrated = false;
+      stopConfetti();
+      updateCountdown();
+    }
+
+    function selectCustomDate() {
+      dateInput.value = "";
+      eventInput.value = "";
+      dateInput.disabled = false;
+      eventInput.disabled = false;
+      celebrated = false;
+      stopConfetti();
+      updateHeading();
+      updateCountdown();
+    }
+
+    function selectNextHoliday() {
+      const now = Date.now();
+      const nextHoliday = holidays.find(holiday => new Date(holiday.date).getTime() > now);
+      if (nextHoliday) {
+        selectHoliday(nextHoliday);
+      } else {
+        holidaySelect.value = "custom";
+        selectCustomDate();
+      }
+    }
+
+    function resizeCanvas() {
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * scale;
+      canvas.height = window.innerHeight * scale;
+      context.setTransform(scale, 0, 0, scale, 0, 0);
+    }
+
+    function drawConfetti() {
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      confettiPieces = confettiPieces.filter(piece => piece.y < window.innerHeight + 20);
+      for (const piece of confettiPieces) {
+        piece.x += piece.speedX;
+        piece.y += piece.speedY;
+        piece.rotation += piece.spin;
+        piece.speedY += 0.035;
+        context.save();
+        context.translate(piece.x, piece.y);
+        context.rotate(piece.rotation);
+        context.fillStyle = piece.color;
+        context.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.65);
+        context.restore();
+      }
+      if (confettiPieces.length) {
+        confettiFrame = requestAnimationFrame(drawConfetti);
+      } else {
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        confettiFrame = 0;
+      }
+    }
+
+    function celebrate() {
+      if (celebrated) return;
+      celebrated = true;
+      const eventName = eventInput.value.trim() || "your event";
+      celebration.textContent = `Happy ${eventName}!`;
+      if (prefersReducedMotion) return;
+
+      const colors = ["#a78bfa", "#67e8f9", "#f9d77e", "#fb7185", "#86efac"];
+      confettiPieces = Array.from({ length: 150 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: -Math.random() * window.innerHeight * 0.7,
+        speedX: (Math.random() - 0.5) * 3,
+        speedY: Math.random() * 3 + 2,
+        spin: (Math.random() - 0.5) * 0.16,
+        rotation: Math.random() * Math.PI,
+        size: Math.random() * 7 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      }));
+      if (!confettiFrame) confettiFrame = requestAnimationFrame(drawConfetti);
+    }
+
+    function stopConfetti() {
+      if (confettiFrame) cancelAnimationFrame(confettiFrame);
+      confettiFrame = 0;
+      confettiPieces = [];
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    }
+
+    function updateCountdown() {
+      const target = new Date(dateInput.value).getTime();
+      if (!Number.isFinite(target)) {
+        dateInput.setAttribute("aria-invalid", "true");
+        dateError.textContent = "Choose a valid date and time to start the countdown.";
+        Object.values(timeDisplays).forEach(display => { display.textContent = "--"; });
+        celebration.textContent = "";
+        return;
+      }
+      dateInput.setAttribute("aria-invalid", "false");
+      dateError.textContent = "";
+
+      const remaining = target - Date.now();
+      if (remaining <= 0) {
+        Object.values(timeDisplays).forEach(display => { display.textContent = "00"; });
+        if (previousSeconds !== "00") {
+          secondsDisplay.classList.remove("seconds-pop");
+          void secondsDisplay.offsetWidth;
+          secondsDisplay.classList.add("seconds-pop");
+          previousSeconds = "00";
+        }
+        celebrate();
+        return;
+      }
+
+      celebrated = false;
+      celebration.textContent = "";
+      const totalSeconds = Math.ceil(remaining / 1000);
+      const values = {
+        days: String(Math.floor(totalSeconds / 86400)).padStart(3, "0"),
+        hours: String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0"),
+        minutes: String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0"),
+        seconds: String(totalSeconds % 60).padStart(2, "0")
+      };
+
+      for (const [unit, value] of Object.entries(values)) {
+        timeDisplays[unit].textContent = value;
+      }
+      if (values.seconds !== previousSeconds) {
+        secondsDisplay.classList.remove("seconds-pop");
+        void secondsDisplay.offsetWidth;
+        secondsDisplay.classList.add("seconds-pop");
+        previousSeconds = values.seconds;
+      }
+    }
+
+    holidaySelect.addEventListener("change", () => {
+      if (holidaySelect.value === "custom") {
+        selectCustomDate();
+        return;
+      }
+      const holiday = holidays.find(item => item.date === holidaySelect.value);
+      if (holiday) selectHoliday(holiday);
+    });
+    dateInput.addEventListener("input", () => {
+      celebrated = false;
+      stopConfetti();
+      updateCountdown();
+    });
+    eventInput.addEventListener("input", () => {
+      updateHeading();
+      celebrated = false;
+      stopConfetti();
+      updateCountdown();
+    });
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    selectNextHoliday();
+    window.setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
